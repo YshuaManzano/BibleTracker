@@ -18,14 +18,22 @@ VerseTrack is a comprehensive, gamified Bible reading tracker designed to keep u
 ## Project Structure
 
 ```bash
-BibleTracker/
-├── backend/          # Python backend (FastAPI)
-├── frontend/         # TypeScript / Expo mobile app
-├── memory/           # Memory storage/context
-├── tests/            # Test suite 
-├── test_reports/     # Generated reports for testing
-└── .emergent/        # Emergent LLM configurations
-```
+project-root/
+├── app/
+│   ├── backend/            # FastAPI logic, endpoints, and database connection
+│   │   ├── bible_data.py   # 66 books metadata, plans, badge criteria
+│   │   └── server.py       # Auth, API proxy, progress, AI endpoints
+│   └── frontend/           # Expo React Native code
+│       ├── src/            # colors.ts, api.ts, contexts (Auth/Theme)
+│       ├── app/            # expo-router directory
+│       │   ├── (auth)/     # login.tsx, register.tsx
+│       │   ├── (tabs)/     # Home, Plans, Circles, Bible Map, Profile
+│       │   ├── circle-detail.tsx # Member progress and invite codes
+│       │   ├── reader.tsx  # Bible reader with AI tools
+│       │   └── mood.tsx    # Emotion-based reading logic
+├── .gitignore              
+└── README.md               # The project "Manual"
+
 
 ## Getting Started
 
