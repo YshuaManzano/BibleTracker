@@ -4,16 +4,16 @@ VerseTrack is a comprehensive, gamified Bible reading tracker designed to keep u
 
 ## Features
 
-  - **Flexible Reading Plans:** Tailor your reading schedule to fit your lifestyle and spiritual goals.
-  - **GitHub-Style Heat Maps:** Visually track your daily consistency with an intuitive progress heat map.
-  - ** AI-Powered Chapter Summaries:** Gain deeper insights into scripture with automated summaries powered by Emergent LLM.
-  - ** Reading Circles:** Form communal groups to foster accountability, share progress, and encourage each other in your faith journey.
+  - Flexible Reading Plans:Tailor your reading schedule to fit your lifestyle and spiritual goals.
+  - GitHub-Style Heat Maps: Visually track your daily consistency with an intuitive progress heat map.
+  -  AI-Powered Chapter Summaries: Gain deeper insights into scripture with automated summaries powered by Emergent LLM.
+  - Reading Circles: Form communal groups to foster accountability, share progress, and encourage each other in your faith journey.
 
 ##  Tech Stack
 
-  - **Frontend:** TypeScript, Expo / React Native
-  - **Backend:** Python, FastAPI (Uvicorn)
-  - **AI Integration:** Emergent LLM
+  - Frontend:TypeScript, Expo / React Native
+    Backend: Python, FastAPI (Uvicorn)
+  - AI Integration:Emergent LLM
 
 ## Project Structure
 
@@ -56,7 +56,7 @@ cd BibleTracker
 
 Create a `.env` file based on the provided `.env.example` in both the `backend` and `frontend` directories.
 
-> **Note:** Ensure you include your **Emergent LLM key** in the backend environment variables to enable the AI chapter summaries.
+> Note: Ensure you include your Emergent LLM key in the backend environment variables to enable the AI chapter summaries.
 
 ### 3\. Install and Run the Backend
 
