@@ -1,9 +1,9 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Storage } from './storage';
 
 const API_BASE = process.env.EXPO_PUBLIC_BACKEND_URL;
 
 async function getToken(): Promise<string | null> {
-  return AsyncStorage.getItem('auth_token');
+  return Storage.getItem('auth_token');
 }
 
 async function request(path: string, options: RequestInit = {}): Promise<any> {
@@ -16,7 +16,7 @@ async function request(path: string, options: RequestInit = {}): Promise<any> {
 
   const res = await fetch(`${API_BASE}/api${path}`, { ...options, headers });
   if (res.status === 401) {
-    await AsyncStorage.removeItem('auth_token');
+    await Storage.removeItem('auth_token');
     throw new Error('Session expired');
   }
   if (!res.ok) {

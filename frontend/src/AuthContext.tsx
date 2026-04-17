@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Storage } from './storage';
 import { api } from './api';
 
 type User = { id: string; name: string; email: string } | null;
@@ -27,13 +27,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function checkAuth() {
     try {
-      const token = await AsyncStorage.getItem('auth_token');
+      const token = await Storage.getItem('auth_token');
       if (token) {
         const data = await api.getMe();
         setUser(data);
       }
     } catch {
-      await AsyncStorage.removeItem('auth_token');
+      await Storage.removeItem('auth_token');
     } finally {
       setLoading(false);
     }
@@ -41,18 +41,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function login(email: string, password: string) {
     const data = await api.login(email, password);
-    await AsyncStorage.setItem('auth_token', data.token);
+    await Storage.setItem('auth_token', data.token);
     setUser(data.user);
   }
 
   async function register(name: string, email: string, password: string) {
     const data = await api.register(name, email, password);
-    await AsyncStorage.setItem('auth_token', data.token);
+    await Storage.setItem('auth_token', data.token);
     setUser(data.user);
   }
 
   async function logout() {
-    await AsyncStorage.removeItem('auth_token');
+    await Storage.removeItem('auth_token');
     setUser(null);
   }
 
