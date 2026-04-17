@@ -1,21 +1,21 @@
-# 📖 VerseTrack (BibleTracker)
+# VerseTrack (BibleTracker)
 
 VerseTrack is a comprehensive, gamified Bible reading tracker designed to keep users engaged and consistent in their faith journey. Whether you're tracking daily progress or reading along with friends, VerseTrack offers a modern, interactive way to stay accountable and dive deeper into the Word.
 
-## ✨ Features
+## Features
 
-  - **📅 Flexible Reading Plans:** Tailor your reading schedule to fit your lifestyle and spiritual goals.
-  - **🔥 GitHub-Style Heat Maps:** Visually track your daily consistency with an intuitive progress heat map.
-  - **🤖 AI-Powered Chapter Summaries:** Gain deeper insights into scripture with automated summaries powered by Emergent LLM.
-  - **👥 Reading Circles:** Form communal groups to foster accountability, share progress, and encourage each other in your faith journey.
+  - **Flexible Reading Plans:** Tailor your reading schedule to fit your lifestyle and spiritual goals.
+  - **GitHub-Style Heat Maps:** Visually track your daily consistency with an intuitive progress heat map.
+  - ** AI-Powered Chapter Summaries:** Gain deeper insights into scripture with automated summaries powered by Emergent LLM.
+  - ** Reading Circles:** Form communal groups to foster accountability, share progress, and encourage each other in your faith journey.
 
-## 🛠 Tech Stack
+##  Tech Stack
 
   - **Frontend:** TypeScript, Expo / React Native
   - **Backend:** Python, FastAPI (Uvicorn)
   - **AI Integration:** Emergent LLM
 
-## 📂 Project Structure
+## Project Structure
 
 ```bash
 BibleTracker/
@@ -27,7 +27,7 @@ BibleTracker/
 └── .emergent/        # Emergent LLM configurations
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 Follow these steps to run VerseTrack locally on your machine.
 
@@ -70,7 +70,7 @@ npm install
 npx expo start
 ```
 
-## 🤝 Contributors
+##  Contributors
 
-  - **[YshuaManzano](https://www.google.com/search?q=https://github.com/YshuaManzano)** ---
-    *If you find this project helpful, please consider giving it a ⭐ on GitHub\!*
+  - **[Manzano](https://www.google.com/search?q=https://github.com/Manzano)** ---
+   
