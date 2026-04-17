@@ -89,4 +89,21 @@ export const api = {
   getSettings: () => request('/settings'),
   updateTheme: (theme: string) =>
     request('/settings/theme', { method: 'PUT', body: JSON.stringify({ theme }) }),
+
+  // Circles
+  createCircle: (name: string, description: string, privacy: string, planMode: string, planId?: string) =>
+    request('/circles', { method: 'POST', body: JSON.stringify({ name, description, privacy, plan_mode: planMode, plan_id: planId }) }),
+  getMyCircles: () => request('/circles'),
+  getCircleByInvite: (inviteCode: string) => request(`/circles/invite/${inviteCode}`),
+  joinCircle: (inviteCode: string) =>
+    request('/circles/join', { method: 'POST', body: JSON.stringify({ invite_code: inviteCode }) }),
+  getCircleDetail: (circleId: string) => request(`/circles/${circleId}`),
+  approveMember: (circleId: string, userId: string) =>
+    request(`/circles/${circleId}/approve/${userId}`, { method: 'POST' }),
+  rejectMember: (circleId: string, userId: string) =>
+    request(`/circles/${circleId}/reject/${userId}`, { method: 'POST' }),
+  leaveCircle: (circleId: string) =>
+    request(`/circles/${circleId}/leave`, { method: 'DELETE' }),
+  deleteCircle: (circleId: string) =>
+    request(`/circles/${circleId}`, { method: 'DELETE' }),
 };

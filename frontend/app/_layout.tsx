@@ -14,6 +14,7 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="reader" options={{ presentation: 'card' }} />
           <Stack.Screen name="mood" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="circle-detail" options={{ presentation: 'card' }} />
         </Stack>
       </AuthProvider>
     </ThemeProvider>

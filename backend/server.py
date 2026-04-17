@@ -67,6 +67,16 @@ class MarkReadInput(BaseModel):
 class RecalculateInput(BaseModel):
     plan_id: str
 
+class CreateCircleInput(BaseModel):
+    name: str
+    description: str = ""
+    privacy: str = "public"  # "public" or "private"
+    plan_mode: str = "individual"  # "shared" or "individual"
+    plan_id: Optional[str] = None  # for shared mode
+
+class JoinCircleInput(BaseModel):
+    invite_code: str
+
 # ══════════════════════════════════════════════════
 # AUTH UTILITIES
 # ══════════════════════════════════════════════════
@@ -632,6 +642,222 @@ async def get_badges(user: dict = Depends(get_current_user)):
     return {"badges": result}
 
 # ══════════════════════════════════════════════════
+# READING CIRCLES
+# ══════════════════════════════════════════════════
+import secrets
+import string
+
+def generate_invite_code(length=8):
+    chars = string.ascii_uppercase + string.digits
+    return ''.join(secrets.choice(chars) for _ in range(length))
+
+@api.post("/circles")
+async def create_circle(data: CreateCircleInput, user: dict = Depends(get_current_user)):
+    invite_code = generate_invite_code()
+    # Ensure unique
+    while await db.circles.find_one({"invite_code": invite_code}):
+        invite_code = generate_invite_code()
+    circle = {
+        "name": data.name.strip(),
+        "description": data.description.strip(),
+        "privacy": data.privacy if data.privacy in ("public", "private") else "public",
+        "plan_mode": data.plan_mode if data.plan_mode in ("shared", "individual") else "individual",
+        "plan_id": data.plan_id,
+        "creator_id": user["_id"],
+        "creator_name": user["name"],
+        "invite_code": invite_code,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "members": [{
+            "user_id": user["_id"],
+            "name": user["name"],
+            "status": "active",
+            "role": "creator",
+            "joined_at": datetime.now(timezone.utc).isoformat(),
+        }],
+    }
+    result = await db.circles.insert_one(circle)
+    circle["id"] = str(result.inserted_id)
+    circle.pop("_id", None)
+    return circle
+
+@api.get("/circles")
+async def list_my_circles(user: dict = Depends(get_current_user)):
+    circles = await db.circles.find({"members.user_id": user["_id"]}).to_list(50)
+    result = []
+    for c in circles:
+        c["id"] = str(c["_id"])
+        del c["_id"]
+        active_members = [m for m in c.get("members", []) if m["status"] == "active"]
+        c["member_count"] = len(active_members)
+        result.append(c)
+    return {"circles": result}
+
+@api.get("/circles/invite/{invite_code}")
+async def get_circle_by_invite(invite_code: str):
+    circle = await db.circles.find_one({"invite_code": invite_code})
+    if not circle:
+        raise HTTPException(status_code=404, detail="Circle not found")
+    active_members = [m for m in circle.get("members", []) if m["status"] == "active"]
+    return {
+        "id": str(circle["_id"]),
+        "name": circle["name"],
+        "description": circle["description"],
+        "privacy": circle["privacy"],
+        "plan_mode": circle["plan_mode"],
+        "creator_name": circle.get("creator_name", "Unknown"),
+        "member_count": len(active_members),
+        "invite_code": invite_code,
+    }
+
+@api.post("/circles/join")
+async def join_circle(data: JoinCircleInput, user: dict = Depends(get_current_user)):
+    circle = await db.circles.find_one({"invite_code": data.invite_code})
+    if not circle:
+        raise HTTPException(status_code=404, detail="Invalid invite code")
+    # Check if already a member
+    for m in circle.get("members", []):
+        if m["user_id"] == user["_id"]:
+            if m["status"] == "active":
+                raise HTTPException(status_code=400, detail="Already a member")
+            if m["status"] == "pending":
+                raise HTTPException(status_code=400, detail="Join request already pending")
+    status = "active" if circle["privacy"] == "public" else "pending"
+    new_member = {
+        "user_id": user["_id"],
+        "name": user["name"],
+        "status": status,
+        "role": "member",
+        "joined_at": datetime.now(timezone.utc).isoformat(),
+    }
+    await db.circles.update_one({"_id": circle["_id"]}, {"$push": {"members": new_member}})
+    return {"status": status, "message": "Joined successfully!" if status == "active" else "Join request sent. Waiting for approval."}
+
+@api.post("/circles/{circle_id}/approve/{member_user_id}")
+async def approve_member(circle_id: str, member_user_id: str, user: dict = Depends(get_current_user)):
+    try:
+        circle = await db.circles.find_one({"_id": ObjectId(circle_id)})
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid circle ID")
+    if not circle:
+        raise HTTPException(status_code=404, detail="Circle not found")
+    if circle["creator_id"] != user["_id"]:
+        raise HTTPException(status_code=403, detail="Only the creator can approve members")
+    result = await db.circles.update_one(
+        {"_id": ObjectId(circle_id), "members.user_id": member_user_id},
+        {"$set": {"members.$.status": "active"}}
+    )
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Member not found")
+    return {"status": "approved"}
+
+@api.post("/circles/{circle_id}/reject/{member_user_id}")
+async def reject_member(circle_id: str, member_user_id: str, user: dict = Depends(get_current_user)):
+    try:
+        circle = await db.circles.find_one({"_id": ObjectId(circle_id)})
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid circle ID")
+    if not circle:
+        raise HTTPException(status_code=404, detail="Circle not found")
+    if circle["creator_id"] != user["_id"]:
+        raise HTTPException(status_code=403, detail="Only the creator can reject members")
+    await db.circles.update_one(
+        {"_id": ObjectId(circle_id)},
+        {"$pull": {"members": {"user_id": member_user_id, "status": "pending"}}}
+    )
+    return {"status": "rejected"}
+
+@api.delete("/circles/{circle_id}/leave")
+async def leave_circle(circle_id: str, user: dict = Depends(get_current_user)):
+    try:
+        circle = await db.circles.find_one({"_id": ObjectId(circle_id)})
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid circle ID")
+    if not circle:
+        raise HTTPException(status_code=404, detail="Circle not found")
+    if circle["creator_id"] == user["_id"]:
+        raise HTTPException(status_code=400, detail="Creator cannot leave. Delete the circle instead.")
+    await db.circles.update_one(
+        {"_id": ObjectId(circle_id)},
+        {"$pull": {"members": {"user_id": user["_id"]}}}
+    )
+    return {"status": "left"}
+
+@api.get("/circles/{circle_id}")
+async def get_circle_detail(circle_id: str, user: dict = Depends(get_current_user)):
+    try:
+        circle = await db.circles.find_one({"_id": ObjectId(circle_id)})
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid circle ID")
+    if not circle:
+        raise HTTPException(status_code=404, detail="Circle not found")
+    # Check membership
+    is_member = any(m["user_id"] == user["_id"] and m["status"] == "active" for m in circle.get("members", []))
+    if not is_member:
+        raise HTTPException(status_code=403, detail="Not a member of this circle")
+    # Build member progress
+    members_progress = []
+    for m in circle.get("members", []):
+        if m["status"] != "active":
+            continue
+        # Get total chapters read by this member
+        total_read = await db.reading_log.count_documents({"user_id": m["user_id"]})
+        # Get streak
+        logs = await db.reading_log.find({"user_id": m["user_id"]}, {"_id": 0, "date": 1}).to_list(10000)
+        read_dates = sorted(set(log["date"] for log in logs), reverse=True)
+        streak = 0
+        if read_dates:
+            today = datetime.now(timezone.utc).date()
+            check_date = today
+            for _ in range(400):
+                if check_date.strftime("%Y-%m-%d") in read_dates:
+                    streak += 1
+                else:
+                    break
+                check_date -= timedelta(days=1)
+        # If shared plan mode, get plan progress
+        plan_progress = None
+        if circle.get("plan_mode") == "shared" and circle.get("plan_id"):
+            user_plan = await db.user_plans.find_one({"user_id": m["user_id"], "plan_id": circle["plan_id"], "status": "active"})
+            if user_plan:
+                plan_progress = {
+                    "completed": user_plan.get("completed_chapters", 0),
+                    "total": user_plan.get("total_chapters", 1),
+                    "percent": round((user_plan.get("completed_chapters", 0) / max(user_plan.get("total_chapters", 1), 1)) * 100),
+                }
+        members_progress.append({
+            "user_id": m["user_id"],
+            "name": m["name"],
+            "role": m["role"],
+            "joined_at": m["joined_at"],
+            "total_chapters_read": total_read,
+            "current_streak": streak,
+            "plan_progress": plan_progress,
+        })
+    # Get pending members if creator
+    pending = []
+    if circle["creator_id"] == user["_id"]:
+        pending = [m for m in circle.get("members", []) if m["status"] == "pending"]
+    circle["id"] = str(circle["_id"])
+    del circle["_id"]
+    circle["members_progress"] = members_progress
+    circle["pending_members"] = pending
+    circle["is_creator"] = circle["creator_id"] == user["_id"]
+    return circle
+
+@api.delete("/circles/{circle_id}")
+async def delete_circle(circle_id: str, user: dict = Depends(get_current_user)):
+    try:
+        circle = await db.circles.find_one({"_id": ObjectId(circle_id)})
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid circle ID")
+    if not circle:
+        raise HTTPException(status_code=404, detail="Circle not found")
+    if circle["creator_id"] != user["_id"]:
+        raise HTTPException(status_code=403, detail="Only the creator can delete the circle")
+    await db.circles.delete_one({"_id": ObjectId(circle_id)})
+    return {"status": "deleted"}
+
+# ══════════════════════════════════════════════════
 # DASHBOARD STATS
 # ══════════════════════════════════════════════════
 @api.get("/dashboard")
@@ -681,6 +907,8 @@ async def startup():
     await db.notes.create_index([("user_id", 1), ("book_slug", 1), ("chapter", 1)])
     await db.badges.create_index([("user_id", 1), ("badge_id", 1)], unique=True)
     await db.user_plans.create_index([("user_id", 1), ("plan_id", 1)])
+    await db.circles.create_index("invite_code", unique=True)
+    await db.circles.create_index([("members.user_id", 1)])
     # Seed admin
     admin_email = os.environ.get("ADMIN_EMAIL", "admin@bibleapp.com")
     admin_password = os.environ.get("ADMIN_PASSWORD", "admin123")

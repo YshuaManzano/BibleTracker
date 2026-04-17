@@ -20,6 +20,7 @@ export default function TabLayout() {
     }}>
       <Tabs.Screen name="index" options={{ title: 'Home', tabBarIcon: ({ color, size }) => <Ionicons name="home" size={size} color={color} /> }} />
       <Tabs.Screen name="plans" options={{ title: 'Plans', tabBarIcon: ({ color, size }) => <Ionicons name="calendar" size={size} color={color} /> }} />
+      <Tabs.Screen name="circles" options={{ title: 'Circles', tabBarIcon: ({ color, size }) => <Ionicons name="people" size={size} color={color} /> }} />
       <Tabs.Screen name="map" options={{ title: 'Bible Map', tabBarIcon: ({ color, size }) => <Ionicons name="grid" size={size} color={color} /> }} />
       <Tabs.Screen name="profile" options={{ title: 'Profile', tabBarIcon: ({ color, size }) => <Ionicons name="person" size={size} color={color} /> }} />
     </Tabs>

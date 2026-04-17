@@ -5,9 +5,7 @@ import os
 @pytest.fixture(scope="session")
 def base_url():
     """Get base URL from environment"""
-    url = os.environ.get('EXPO_PUBLIC_BACKEND_URL')
-    if not url:
-        pytest.fail("EXPO_PUBLIC_BACKEND_URL not set in environment")
+    url = os.environ.get('EXPO_PUBLIC_BACKEND_URL', 'https://versetrack.preview.emergentagent.com')
     return url.rstrip('/')
 
 @pytest.fixture(scope="session")
@@ -47,8 +45,20 @@ def test_user_token(base_url, api_client):
         })
         if response.status_code == 200:
             data = response.json()
-            return data.get("token"), email
+            return data.get("token")
         else:
             pytest.skip(f"Test user registration failed: {response.status_code}")
     except Exception as e:
         pytest.skip(f"Cannot create test user: {e}")
+
+@pytest.fixture(scope="session")
+def test_user_id(base_url, api_client, test_user_token):
+    """Get test user ID"""
+    try:
+        response = api_client.get(f"{base_url}/api/auth/me", headers={"Authorization": f"Bearer {test_user_token}"})
+        if response.status_code == 200:
+            return response.json()["id"]
+        else:
+            pytest.skip("Cannot get test user ID")
+    except Exception as e:
+        pytest.skip(f"Cannot get test user ID: {e}")
