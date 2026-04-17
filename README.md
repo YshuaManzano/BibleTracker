@@ -1,7 +1,3 @@
-Here is a polished and well-structured `README.md` for your repository. It builds upon the existing content and structures it to be professional and visually appealing.
-
------
-
 # 📖 VerseTrack (BibleTracker)
 
 VerseTrack is a comprehensive, gamified Bible reading tracker designed to keep users engaged and consistent in their faith journey. Whether you're tracking daily progress or reading along with friends, VerseTrack offers a modern, interactive way to stay accountable and dive deeper into the Word.
