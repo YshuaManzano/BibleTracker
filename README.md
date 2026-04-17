@@ -5,7 +5,7 @@ VerseTrack is a comprehensive, gamified Bible reading tracker designed to keep u
 
 Getting Started
 
-•	Clone: git clone https://github.com/YshuaManzano/versetrack.git
+•	Clone: git clone https:[//github.com/YshuaManzano/versetrack](https://github.com/YshuaManzano/BibleTracker).git
 
 •	Install Frontend: cd app/frontend && npm install
 
