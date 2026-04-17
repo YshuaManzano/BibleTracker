@@ -1,0 +1,139 @@
+{
+  "project_meta": {
+    "domain": "Religion, Wellness, Habit Tracking",
+    "theme_preference": "Light/Dark toggle (Default Dark with Soft Ambers)",
+    "archetype": "1 (Organic & Earthy)",
+    "aesthetic_goals": "Calm, reflective, focused, organic. Not a standard 'tech' app. Feels like reading a premium, beautifully typeset physical book with modern digital affordances."
+  },
+  "colors": {
+    "light": {
+      "background": "#FDFBF7",
+      "surface": "#F5F2EA",
+      "primary": "#D97757",
+      "primary_foreground": "#FFFFFF",
+      "secondary": "#EAE4DD",
+      "secondary_foreground": "#2C2826",
+      "muted": "#F0EBE1",
+      "muted_foreground": "#6B615A",
+      "accent": "#E8A365",
+      "accent_foreground": "#1A1614",
+      "border": "#E8E3DA",
+      "text_primary": "#2C2826",
+      "success_grace_day": "#8BA888",
+      "danger": "#D95757"
+    },
+    "dark": {
+      "background": "#1A1614",
+      "surface": "#26201E",
+      "primary": "#E8A365",
+      "primary_foreground": "#1A1614",
+      "secondary": "#3D332F",
+      "secondary_foreground": "#EAE4DD",
+      "muted": "#2D2623",
+      "muted_foreground": "#A39A94",
+      "accent": "#D97757",
+      "accent_foreground": "#FFFFFF",
+      "border": "#3D332F",
+      "text_primary": "#EAE4DD",
+      "success_grace_day": "#6A8A67",
+      "danger": "#C44545"
+    },
+    "heatmap_scale": [
+      "bg-primary/10",
+      "bg-primary/30",
+      "bg-primary/50",
+      "bg-primary/70",
+      "bg-primary"
+    ]
+  },
+  "typography": {
+    "font_families": {
+      "heading": "Cormorant Garamond, serif",
+      "body": "Outfit, sans-serif",
+      "bible_text": "Cormorant Garamond, serif"
+    },
+    "scales": {
+      "h1": "text-4xl sm:text-5xl tracking-tight leading-tight",
+      "h2": "text-2xl sm:text-3xl tracking-tight leading-snug",
+      "h3": "text-xl sm:text-2xl leading-snug",
+      "body_ui": "text-base leading-normal",
+      "bible_reader": "text-lg sm:text-xl leading-loose tracking-wide",
+      "caption": "text-sm tracking-wide uppercase font-medium"
+    }
+  },
+  "spacing_and_layout": {
+    "philosophy": "Generous spacing. Allow the text to breathe. Use p-6 or p-8 for main containers.",
+    "container": "max-w-md mx-auto h-full flex flex-col (mobile-first container) or max-w-2xl for reader view.",
+    "bento_grid": "grid grid-cols-2 gap-4. Dashboards use bento style (e.g., span-2 for main progress, span-1 for streak/grace day).",
+    "surface_styles": {
+      "cards": "rounded-2xl border border-border bg-surface shadow-sm",
+      "reader_view": "bg-background border-none shadow-none (absolute focus)"
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "rounded-full bg-primary text-primary-foreground font-medium px-6 py-3 transition-transform hover:-translate-y-0.5 shadow-md",
+      "secondary": "rounded-full bg-secondary text-secondary-foreground font-medium px-6 py-3"
+    },
+    "heatmap": {
+      "description": "Grid of small rounded squares (w-3 h-3 rounded-sm). Color intensity depends on chapters read.",
+      "gap": "gap-1"
+    },
+    "streak_tracker": {
+      "design": "Circular progress or bold typographic number. Include a small leaf or amber icon indicating 'Grace Day' available."
+    },
+    "bible_map": {
+      "design": "Grid of pills or a hex layout representing books. Completed: bg-primary text-primary-foreground. In Progress: border-primary text-primary. Unread: bg-muted text-muted-foreground."
+    },
+    "milestone_badges": {
+      "design": "Soft glassmorphism cards with amber/gold glowing icons. Use Phosphor Icons (duotone) for a premium look."
+    },
+    "reader_view": {
+      "design": "Distraction-free. Scroll hides navigation. Chapter summaries (TL;DR) in a soft muted callout box at the top. Tap verse to open Note-Taking bottom drawer."
+    }
+  },
+  "media_and_images": {
+    "daily_verse_backgrounds": {
+      "category": "Hero/Background",
+      "url": "https://images.unsplash.com/photo-1762430202902-b858bbaecc46?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NzB8MHwxfHNlYXJjaHwzfHxjYWxtJTIwbmF0dXJlJTIwc3Vuc2V0JTIwbWVkaXRhdGlvbnxlbnwwfHx8fDE3NzY0MDA5NjF8MA&ixlib=rb-4.1.0&q=85",
+      "description": "Calm sunset lake, use with black/50 overlay for white text daily verse."
+    },
+    "mood_reading_background": {
+      "category": "Mood Cards",
+      "url": "https://images.unsplash.com/photo-1758906785616-9e5542d25532?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NzB8MHwxfHNlYXJjaHwyfHxjYWxtJTIwbmF0dXJlJTIwc3Vuc2V0JTIwbWVkaXRhdGlvbnxlbnwwfHx8fDE3NzY0MDA5NjF8MA&ixlib=rb-4.1.0&q=85",
+      "description": "Warm sunset walking, great for 'Anxious' or 'Reflective' mood cards."
+    },
+    "auth_background": {
+      "category": "Login Header",
+      "url": "https://images.unsplash.com/photo-1617691184585-02f38a994d85?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDQ2NDN8MHwxfHNlYXJjaHw0fHxhYnN0cmFjdCUyMHdhcm0lMjBhbWJlciUyMGxpZ2h0JTIwZ3JhZGllbnR8ZW58MHx8fHwxNzc2NDAwOTY5fDA&ixlib=rb-4.1.0&q=85",
+      "description": "Abstract warm amber light gradient for the top of the auth screen."
+    }
+  },
+  "icons": {
+    "library": "lucide-react or @phosphor-icons/react",
+    "usage": "Use duotone or light weights. E.g., BookOpen, Flame (Streak), Map, Pen (Notes), Moon/Sun (Theme Toggle)."
+  },
+  "accessibility_and_testing": {
+    "contrast": "Ensure soft amber meets 4.5:1 ratio on the dark #1A1614 background.",
+    "test_ids": [
+      "data-testid='auth-email-input'",
+      "data-testid='auth-password-input'",
+      "data-testid='auth-submit-button'",
+      "data-testid='streak-tracker-widget'",
+      "data-testid='heatmap-widget'",
+      "data-testid='daily-verse-card'",
+      "data-testid='bible-book-button'",
+      "data-testid='reader-content'",
+      "data-testid='theme-toggle-button'"
+    ]
+  },
+  "instructions_to_main_agent": [
+    "Use Tailwind CSS for styling. Implement the custom color palette in tailwind.config.js.",
+    "The app requires a manual theme toggle but respects system settings. Use standard Tailwind dark mode (class based).",
+    "For the Heat Map, map the reading history to an array and render a grid of small divs using the 'heatmap_scale' colors based on intensity.",
+    "For the Bible Map, use a responsive grid. Since it's mobile-first, a 3-column or 4-column scrolling grid of rounded-lg buttons works best.",
+    "The Reader View MUST use the 'Cormorant Garamond' serif font for the actual biblical text. The UI around it (nav, notes) should use the sans-serif font.",
+    "Integrate Shadcn primitives where needed (e.g., Drawer/Sheet for the note-taking feature, Tabs for plan selection).",
+    "Use the provided Unsplash URLs for rich, immersive backgrounds on the Auth screen and Daily Verse cards. Apply appropriate overlays (bg-black/40) so text remains highly readable."
+  ]
+}
