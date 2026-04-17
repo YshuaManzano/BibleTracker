@@ -171,9 +171,19 @@ async def get_chapter(version: str, book_slug: str, chapter: int):
         async with httpx.AsyncClient(timeout=15.0) as client_http:
             resp = await client_http.get(url)
             if resp.status_code == 200:
-                data = resp.json()
-                verses = data.get("verses", [])
-                full_text = " ".join(v.get("text", "") for v in verses)
+                raw = resp.json()
+                # API returns {data: [{book, chapter, verse, text}]} format
+                raw_verses = raw.get("data") or raw.get("verses") or []
+                # Deduplicate (API sometimes returns duplicates)
+                seen = set()
+                verses = []
+                for v in raw_verses:
+                    vnum = int(v.get("verse", 0))
+                    if vnum not in seen:
+                        seen.add(vnum)
+                        verses.append({"verse": vnum, "text": v.get("text", "")})
+                verses.sort(key=lambda x: x["verse"])
+                full_text = " ".join(v["text"] for v in verses)
                 await db.bible_cache.insert_one({"key": cache_key, "verses": verses, "text": full_text, "fetched_at": datetime.now(timezone.utc).isoformat()})
                 return {"book": book["name"], "chapter": chapter, "version": version, "verses": verses, "text": full_text}
             else:
